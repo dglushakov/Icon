@@ -34,17 +34,26 @@ class AR2NS:
         return records_list
 
     def get_settings(self):
-        records_request = self.make_request('settings.xml')
+        settings_request = self.make_request('settings.xml')
+
+        settings = []
+        root = ET.fromstring(settings_request.content)
+        for child in root:
+            setting = {child.tag: child.text}
+            settings.append(setting)
+        return settings
 
 
 if __name__ == "__main__":
     device = AR2NS('192.168.0.100')
-
-    date_from = datetime.datetime.strptime('Jul 28 2020', '%b %d %Y')
-    date_to = datetime.datetime.strptime('Jul 29 2020', '%b %d %Y')
-    records = device.get_records_list(date_from, date_to)
-    # print (records)
-    for record in records:
-        print(record)
-        if record['ul'] == 0:
-            print('alert')
+    settings = device.get_settings()
+    for setting in settings:
+        print(setting)
+    # date_from = datetime.datetime.strptime('Jul 28 2020', '%b %d %Y')
+    # date_to = datetime.datetime.strptime('Jul 29 2020', '%b %d %Y')
+    # records = device.get_records_list(date_from, date_to)
+    #
+    # for record in records:
+    #     print(record)
+    #     if record['ul'] == 0:
+    #         print('alert')
